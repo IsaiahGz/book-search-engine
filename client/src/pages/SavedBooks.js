@@ -74,7 +74,6 @@ const SavedBooks = () => {
     return <h2>LOADING...</h2>;
   }
   const userData = data?.getSingleUser || {};
-  console.log(userData);
   return (
     <>
       <div fluid className='text-light bg-dark p-5'>
