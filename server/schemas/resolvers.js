@@ -58,6 +58,7 @@ const resolvers = {
           return updatedUser;
         }
       } catch (err) {
+        console.log(err);
         throw new AuthenticationError('You need to be logged in!');
       }
     },
