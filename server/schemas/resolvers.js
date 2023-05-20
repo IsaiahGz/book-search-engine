@@ -30,17 +30,18 @@ const resolvers = {
       const token = signToken(user);
       return { token, user };
     },
-    login: async (parent, { email, password }) => {
+    login: async (parent, { email, username, password }) => {
       const user = await User.findOne({ $or: [{ username: username }, { email: email }] });
       if (!user) {
         throw new AuthenticationError("Can't find this user");
       }
 
-      const correctPw = await user.isCorrectPassword(body.password);
+      const correctPw = await user.isCorrectPassword(password);
 
       if (!correctPw) {
         throw new AuthenticationError('Wrong password!');
       }
+      console.log('signing token');
       const token = signToken(user);
       return { token, user };
     },
