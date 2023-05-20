@@ -2,29 +2,22 @@ const { signToken } = require('../utils/auth');
 const { AuthenticationError, UserInputError } = require('apollo-server-express');
 const { User } = require('../models');
 
-// type Query {
-//   getSingleUser(userId: ID, username: String): User
-// }
-
-// type Mutation {
-//   createUser(username: String!, email: String!, password: String!): Auth
-//   saveBook(user: ID!, bookData: BookInput!): User
-//   deleteBook(user: ID!, bookId: String!): User
-//   login(email: String!, password: String!): Auth
-// }
-
 const resolvers = {
   Query: {
-    getSingleUser: async (parent, { userId, username }) => {
-      // Get a single user by either their id or their username
-      const foundUser = await User.findOne({
-        $or: [{ _id: userId }, { username: username }],
-      });
+    getSingleUser: async (parent, args, context) => {
+      // Must be logged in to use this query
+      if (context.user) {
+        // Get a single user by either their id or their username
+        const foundUser = await User.findOne({
+          $or: [{ _id: context.user._id }, { username: context.user.username }],
+        });
 
-      if (!foundUser) {
-        throw new AuthenticationError('Cannot find a user with this id!');
+        if (!foundUser) {
+          throw new AuthenticationError('Cannot find a user with this id!');
+        }
+        return foundUser;
       }
-      return foundUser;
+      throw new AuthenticationError('You need to be logged in!');
     },
   },
   Mutation: {
